@@ -237,49 +237,161 @@ ShopLinks = {}
 ShopLinks["walmart"]="https://retaillink.login.wal-mart.com/"
 ShopLinks["electronics,entertainment,home"] = "https://smarterhouse.org/appliances-energy/home-electronics"
 
-# --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
+# --- Custom CSS for Styling (MODERN & BEAUTIFUL) ---
 CUSTOM_CARD_CSS = """
 <style>
-/* 1. Set the Primary Color for the Pink Button */
-:root {
-    --primary-color: #ff00ff; /* Bright Magenta/Pink for the Details button */
+/* Beautiful gradient background */
+.stApp {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
 }
 
-/* 3. Style the Card Container (Rounded Corners, Fixed Height) */
+/* Main content area with glass effect */
+.main .block-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-top: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Beautiful search bar */
+.stTextInput > div > div > input {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 50px;
+    padding: 15px 25px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.stTextInput > div > div > input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+/* Header styling */
+h1, h2, h3 {
+    color: #2d3748;
+    font-weight: 700;
+}
+
+/* Card Container - Modern & Clean */
 div[data-testid*="stVerticalBlock"] > .stContainer {
-    border-radius: 15px; 
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1); 
+    background: white;
+    border-radius: 20px; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     overflow: hidden; 
-    height: 400px; 
+    height: 450px; 
     display: flex; 
     flex-direction: column; 
     justify-content: space-between;
-    /* CRITICAL: Ensure the overall card has NO internal top padding */
-    padding: 0 0 10px 0 !important; 
+    padding: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* 4. Style the Image Container (Wrapper: div[data-testid="stImage"]) */
+div[data-testid*="stVerticalBlock"] > .stContainer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Image Container */
 div[data-testid="stImage"] {
-    /* CRITICAL: Aggressively remove all internal/external spacing */
-    margin: 0 !important; 
-    padding: 0 !important;
+    margin: 0;
+    padding: 0;
     flex-shrink: 0;
-    max-width:100%;
-    /* NEW: Remove any border-radius/borders on the container itself */
-    border-radius: 0 !important; 
-    border: none !important;
+    max-width: 100%;
+    border-radius: 0;
+    border: none;
+    overflow: hidden;
 }
 
+div[data-testid="stImage"] img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Card content wrapper */
+.card-content-wrapper {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Button styling - Modern & Colorful */
+.stButton > button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Link button styling */
+.stLinkButton > a {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white !important;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
+}
+
+.stLinkButton > a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+}
+
+/* Logout button styling */
+div[data-testid="column"]:last-child .stButton > button {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 8px 20px;
+    font-size: 14px;
+}
+
+/* Info boxes */
+.stInfo, .stWarning, .stSuccess, .stError {
+    border-radius: 10px;
+    padding: 15px;
+    border: none;
+}
+
+/* Divider */
+hr {
+    margin: 2rem 0;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #667eea, transparent);
+}
+
+/* Hide default Streamlit elements */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
-.stDeployButton {
-    visibility: hidden;
-}
-[data-testid="stStatusWidget"] {
-    visibility: hidden;
-}
-.stMainBlockContainer{
-    padding: 0;
+.stDeployButton {visibility: hidden;}
+[data-testid="stStatusWidget"] {visibility: hidden;}
+
+/* Logo section */
+div[data-testid="stImage"]:first-of-type {
+    height: auto;
 }
 </style>
 """
@@ -373,50 +485,49 @@ def plot_price_history(df_raw, item_name):
 
 def display_cards(card_data, item_name, col):
     """
-    Displays card info in a 3-column format, relying heavily on global CSS for styling.
+    Displays beautiful card info in a 3-column format with modern styling.
     """
     with col: 
-        # The inner container wrapper is necessary for the CSS styling to apply
         with st.container(): 
             
-            # The use_container_width=True is essential here.
+            # Display image
             if ("example" in card_data['image_url']):
-                st.image(GROCERY_IMAGE_PATH, width=1000, caption="") 
+                st.image(GROCERY_IMAGE_PATH, width=1000) 
             else:
-                st.image(card_data['image_url'], width=1000, caption="") 
+                st.image(card_data['image_url'], width=1000) 
 
-            # Use a div wrapper for the content to apply consistent padding via CSS
+            # Card content with better spacing
             st.markdown('<div class="card-content-wrapper">', unsafe_allow_html=True)
             
-            # Item Name (Bold and Large)
-            st.markdown(f"**{item_name}**") 
-            # Description (Smaller and Gray)
-            st.markdown(f"{card_data['description']}")
-            # Details Button 
+            # Item Name (Bold and prominent)
+            st.markdown(f"<h3 style='margin: 0 0 8px 0; color: #2d3748; font-size: 18px;'>{item_name}</h3>", unsafe_allow_html=True)
+            
+            # Description (Styled)
+            st.markdown(f"<p style='color: #718096; font-size: 14px; margin-bottom: 15px; line-height: 1.5;'>{card_data['description']}</p>", unsafe_allow_html=True)
+            
+            # Buttons side by side
             col_details, col_shop = st.columns([1, 1])
             
             with col_details:
-                # Details Button (Existing functionality)
                 st.button(
-                    "Details", 
-                    key=f"btn_details_{item_name}", # Unique key updated
+                    "📊 Details", 
+                    key=f"btn_details_{item_name}",
                     on_click=select_item_for_graph, 
                     args=(item_name,),
                     use_container_width=True 
                 )
             
+            # Get shop URL
             ShopUrl = card_data['link_to_buy']
-            #print(card_data['store'])
             if not ShopUrl:
                 if card_data['store'].lower() in ShopLinks:
                     ShopUrl = ShopLinks[card_data['store'].lower()]
                 else:
                     ShopUrl = "https://www.example.com"
-            #print(ShopUrl)
+            
             with col_shop:
-                # NEW: Shop Now Button (Using st.link_button)
                 st.link_button(
-                    f"🛒 Shop Now",
+                    "🛒 Shop",
                     url=ShopUrl,
                     use_container_width=True
                 )
@@ -510,6 +621,7 @@ st.set_page_config(
     page_icon="🛒",
     layout="wide",
 )
+
 
 def main():
     # Initialize authentication state
