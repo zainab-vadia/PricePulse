@@ -13,13 +13,10 @@ class price_information:
         self.Shop = Shop
 
 
-FinalData = {}
-
-
 def ParseCsv():
+    FinalData = {}
     DataFrame = pd.read_csv('modified.csv')
-
-    DataFrame['price_date'] = pd.to_datetime(DataFrame['price_date'], format='%Y-%m-%d')
+    DataFrame['price_date'] = pd.to_datetime(DataFrame['price_date'], format='%m/%d/%Y')
     DataFrame = DataFrame.sort_values(by="price_date")
     for Index, Row in DataFrame.iterrows():
         if not(Row["item_name"] in FinalData):
@@ -36,6 +33,6 @@ def ParseCsv():
                                                               "category_tags": Row["category_tags"]}
         
     #print(FinalData["Samsung 55-inch 4K Smart TV"])
-
+    return  DataFrame, FinalData
 ParseCsv()
 
