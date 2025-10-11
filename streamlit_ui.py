@@ -75,7 +75,6 @@ def select_item_for_graph(item_name):
     st.session_state['selected_item'] = item_name
 
 # --- 2. Visualization Function (No Change Needed Here) ---
-
 def plot_price_history(df_raw, item_name):
     df_filtered = df_raw[df_raw['item_name'] == item_name].copy()
     
@@ -83,18 +82,52 @@ def plot_price_history(df_raw, item_name):
         st.warning(f"No price history found in the data for: {item_name}")
         return
         
+    # Group by date, taking the minimum price found on that date
     df_plot = df_filtered.groupby('price_date')['current_price'].min().reset_index()
+
+    # 1. Calculate Min/Max Prices and find corresponding rows
+    min_price = df_plot['current_price'].min()
+    max_price = df_plot['current_price'].max()
+    
+    # Get the data point rows for the min and max prices
+    # Use .head(1) in case of ties for the min/max price on different dates
+    df_min = df_plot[df_plot['current_price'] == min_price].head(1)
+    df_max = df_plot[df_plot['current_price'] == max_price].head(1)
+    
+    # Combine min and max data points for the text layer
+    df_extremes = pd.concat([df_min, df_max]).drop_duplicates(keep='first').reset_index(drop=True)
 
     st.markdown(f"### Price History for: **{item_name}**")
     
-    chart = alt.Chart(df_plot).mark_line(point=True).encode(
+    # Base Line Chart
+    line_chart = alt.Chart(df_plot).mark_line(point=True).encode(
         x=alt.X('price_date', title='Date', axis=alt.Axis(format='%Y-%m-%d')),
         y=alt.Y('current_price', title='Price ($)'),
         tooltip=['price_date', alt.Tooltip('current_price', format='$,.2f')]
+    )
+    
+    # Extreme Price Text Layer: Marks the min/max points with their price value
+    text_layer = alt.Chart(df_extremes).mark_text(
+        align='left',
+        baseline='bottom', # Place text above the point
+        dy=-5, # Offset text slightly above the point
+        color='darkred'
+    ).encode(
+        x=alt.X('price_date'),
+        y=alt.Y('current_price'),
+        # Show price as text label
+        text=alt.Text('current_price', format='$,.2f'),
+        tooltip=['price_date', alt.Tooltip('current_price', format='$,.2f')]
     ).properties(
-        title=f"Price Trend over Time"
-    ).interactive() 
-
+        # Update the main chart title to show min/max summary
+        title=[
+            "Price Trend over Time",
+            f"Min: ${min_price:.2f}",
+            f"Max: ${max_price:.2f}"
+        ]
+    )
+    # Combine the layers
+    chart = (line_chart + text_layer).interactive() 
     st.altair_chart(chart, use_container_width=True)
 
 
@@ -167,7 +200,6 @@ def app():
     
     # --- Price History Graph Section (No change) ---
     if st.session_state['selected_item']:
-        st.sidebar.header("Selected Item")
         plot_price_history(st.session_state['raw_df'], st.session_state['selected_item'])
         
         if st.button("⬅️ Back to Card List"):
