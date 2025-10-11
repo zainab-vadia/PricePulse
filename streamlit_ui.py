@@ -1,62 +1,113 @@
 import streamlit as st
 import pandas as pd
 import random
-# Import the new, clean function from main.py
 from main import ParseCsv 
 import altair as alt
 
-# --- Data Loading and Initialization ---
+# --- Configuration and Local Path (Adjust This!) ---
+GROCERY_IMAGE_PATH = "images/grocery.jpeg" 
+LOGO_IMAGE_PATH = "logo.png" 
+FAVICON_PATH = "logo.png" 
+NUMBER_OF_RECOMMENDATIONS = 6 
 
-# Use st.cache_data to ensure the heavy loading/parsing only runs once
+# --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
+CUSTOM_CARD_CSS = """
+<style>
+/* 1. Set the Primary Color for the Pink Button */
+:root {
+    --primary-color: #ff00ff; /* Bright Magenta/Pink for the Details button */
+}
+
+/* 2. Style the Column/Gap (Adds space between cards) */
+/* Using both potential class names for column wrapper for compatibility */
+.st-emotion-cache-1uj259k, .st-emotion-cache-1e5z90m { 
+    padding: 10px; 
+}
+
+/* 3. Style the Card Container (Rounded Corners, Fixed Height) */
+/* Targeting the card container reliably */
+div[data-testid*="stVerticalBlock"] > .stContainer {
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1); 
+    overflow: hidden; 
+    height: 400px; /* Keeping fixed height for shape consistency */
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between;
+    padding-bottom: 10px;
+    padding-top: 0; 
+}
+
+/* 4. Style the Image Container (NEW FIX) */
+/* This targets the Streamlit image container element */
+div[data-testid="stImage"] {
+    max-width: 100%; /* Ensure container doesn't exceed column width */
+    height: auto;
+}
+
+/* 5. Style the Image element itself */
+div[data-testid="stImage"] img {
+    border-radius: 15px 15px 0 0; 
+    width: 100%;
+}
+
+/* 6. Style Text */
+h3 { 
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+p { 
+    font-size: 14px;
+    color: #6c757d; 
+    margin-bottom: 10px;
+}
+
+/* Style the inner block containing text and button for alignment */
+.card-content-wrapper {
+    padding: 0 10px; /* Uniform horizontal padding for the content area */
+}
+</style>
+"""
+
+# --- Data Loading and Initialization (No Change Needed Here) ---
+
 @st.cache_data 
 def get_processed_data_for_streamlit():
     """Wrapper to load data only once."""
     return ParseCsv()
 
-# Load and unpack the data using caching and populate session state
 if 'raw_df' not in st.session_state:
     raw_df, consolidated_data = get_processed_data_for_streamlit()
-    #print(raw_df['item_name'])
     st.session_state['raw_df'] = raw_df
     
-    # Prepare a simpler summary list for card display and searching
     st.session_state['item_summary'] = [
         {"name": name, 
          "description": data.get("item_description"),
-         "image_url": data.get("image_url")}
+         "image_url": GROCERY_IMAGE_PATH} 
         for name, data in consolidated_data.items()
     ]
     
     st.session_state['selected_item'] = None
 
 
-
-# --- 2. Visualization Function (No changes required) ---
-
-# --- Callback Function for Button Press ---
+# --- Callback Function for Button Press (No Change Needed Here) ---
 def select_item_for_graph(item_name):
-    """Sets the session state when a 'View Graph' button is clicked."""
     st.session_state['selected_item'] = item_name
 
-# --- 2. Visualization Function ---
+# --- 2. Visualization Function (No Change Needed Here) ---
 
 def plot_price_history(df_raw, item_name):
-    """Generates an Altair line chart for the price history of a selected item."""
-    
-    # Filter the raw data for the selected item (using lowercase 'item_name' as per previous fix)
     df_filtered = df_raw[df_raw['item_name'] == item_name].copy()
     
-    # Check if there is data to plot for the item
     if df_filtered.empty:
         st.warning(f"No price history found in the data for: {item_name}")
         return
         
-    # Aggregate to ensure only one price point per day (using the minimum price)
     df_plot = df_filtered.groupby('price_date')['current_price'].min().reset_index()
 
     st.markdown(f"### Price History for: **{item_name}**")
     
-    # Create the Altair chart
     chart = alt.Chart(df_plot).mark_line(point=True).encode(
         x=alt.X('price_date', title='Date', axis=alt.Axis(format='%Y-%m-%d')),
         y=alt.Y('current_price', title='Price ($)'),
@@ -67,64 +118,87 @@ def plot_price_history(df_raw, item_name):
 
     st.altair_chart(chart, use_container_width=True)
 
-# --- 3. Streamlit Card Display Function ---
 
-def display_cards(card_data, item_name):
-    """
-    Displays card info and includes a button with an on_click callback.
-    """
-    with st.container(border=True):
-        col1, col2 = st.columns([1, 2])
+# --- 3. Streamlit Card Display Function (SLIGHTLY MODIFIED) ---
 
-        with col1:
-            if card_data.get('image_url'):
-                st.image(card_data['image_url'], caption=item_name, width=100)
-            else:
-                st.write("[No Image URL]")
-        
-        with col2:
-            st.markdown(f"### 🃏 **{item_name}**")
-            st.write(f"**Description:** {card_data['description']}")
+def display_cards(card_data, item_name, col):
+    """
+    Displays card info in a 3-column format, relying heavily on global CSS for styling.
+    """
+    with col: 
+        # The inner container wrapper is necessary for the CSS styling to apply
+        with st.container(): 
             
-            # FIX: Use on_click callback instead of manual state change + st.rerun()
+            # The use_container_width=True is essential here.
+            st.image(card_data['image_url'], use_container_width=True, caption="") 
+            
+            # Use a div wrapper for the content to apply consistent padding via CSS
+            st.markdown('<div class="card-content-wrapper">', unsafe_allow_html=True)
+            
+            # Item Name (Bold and Large)
+            st.markdown(f"**{item_name}**") 
+            # Description (Smaller and Gray)
+            st.markdown(f"{card_data['description']}")
+            
+            # Details Button 
             st.button(
-                f"View Price Graph", 
+                "Details", 
                 key=f"btn_{item_name}",
-                on_click=select_item_for_graph, # The function to call on click
-                args=(item_name,)              # The arguments to pass to the function
-            ) 
+                on_click=select_item_for_graph, 
+                args=(item_name,),
+                use_container_width=True 
+            )
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+
 
 # --- 4. Main Application ---
 
 def app():
-    st.title("Card Data Explorer and Price Tracker 📈")
+    # Inject Custom CSS at the start
+    st.markdown(CUSTOM_CARD_CSS, unsafe_allow_html=True)
+
+    # Set the page configuration
+    st.set_page_config(
+        page_title="Card Data Explorer",
+        page_icon=FAVICON_PATH,
+        layout="wide",
+    )
     
-    # --- Price History Graph Section ---
+    # --- Logo and Centered Search Bar Section (No change) ---
+    col_logo, col_search_center, col_spacer = st.columns([1, 2, 1])
+    with col_logo:
+        try:
+             st.image(LOGO_IMAGE_PATH, width=100)
+        except:
+             st.markdown("## **LOGO**") 
+             
+    with col_search_center:
+        search_query = st.text_input(
+            "Card Search", 
+            placeholder="Search cards...",
+            key="search_input",
+            label_visibility="collapsed" 
+        ).lower()
+
+    st.markdown("---")
+    
+    # --- Price History Graph Section (No change) ---
     if st.session_state['selected_item']:
         st.sidebar.header("Selected Item")
         plot_price_history(st.session_state['raw_df'], st.session_state['selected_item'])
         
-        # This button is simpler and can use the old method because it's the only one active
         if st.button("⬅️ Back to Card List"):
             st.session_state['selected_item'] = None
-            st.rerun()
+            st.rerun() 
 
         st.markdown("---")
     
-    # --- Card List and Search Section ---
-    
-    st.sidebar.header("Search Cards")
-    search_query = st.sidebar.text_input(
-        "Enter card name or part of description:",
-        key="search_input"
-    ).lower()
-
+    # --- Card List and Search Results Section (No change) ---
     all_cards = st.session_state['item_summary']
-
-    # Display logic
+    
     if search_query:
-        # Search Results logic
-        st.header("Search Results")
+        st.header(f"Search Results for: '{search_query}'")
         
         filtered_cards = [
             card for card in all_cards
@@ -133,23 +207,24 @@ def app():
         
         if filtered_cards:
             st.info(f"Displaying {len(filtered_cards)} matching cards.")
-            for card in filtered_cards:
-                display_cards(card, card['name'])
+            card_cols = st.columns(3)
+            for i, card in enumerate(filtered_cards):
+                display_cards(card, card['name'], card_cols[i % 3])
         else:
             st.warning("No cards matched your search query.")
             
     elif not st.session_state['selected_item']:
-        # Random Cards logic
-        st.header("5 Random Cards")
+        st.header("Top Recommendations ✨")
         
-        if len(all_cards) >= 5:
-            random_cards = random.sample(all_cards, 5)
+        if len(all_cards) >= NUMBER_OF_RECOMMENDATIONS:
+            random_cards = random.sample(all_cards, NUMBER_OF_RECOMMENDATIONS)
         else:
             random_cards = all_cards 
             st.warning(f"Only found {len(all_cards)} cards. Displaying all of them.")
             
-        for card in random_cards:
-            display_cards(card, card['name'])
+        card_cols = st.columns(3)
+        for i, card in enumerate(random_cards):
+            display_cards(card, card['name'], card_cols[i % 3])
 
 # Run the Streamlit application
 if __name__ == "__main__":
