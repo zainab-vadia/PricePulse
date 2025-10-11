@@ -11,6 +11,7 @@ FAVICON_PATH = "logo.png"
 NUMBER_OF_RECOMMENDATIONS = 6 
 
 # --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
+#CUSTOM_CARD_CSS = # --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
 CUSTOM_CARD_CSS = """
 <style>
 /* 1. Set the Primary Color for the Pink Button */
@@ -18,58 +19,36 @@ CUSTOM_CARD_CSS = """
     --primary-color: #ff00ff; /* Bright Magenta/Pink for the Details button */
 }
 
-/* 2. Style the Column/Gap (Adds space between cards) */
-/* Using both potential class names for column wrapper for compatibility */
-.st-emotion-cache-1uj259k, .st-emotion-cache-1e5z90m { 
-    padding: 10px; 
-}
+# --- Custom CSS for Styling (FINAL IMAGE SIZE FIX) ---
+<style>
+/* ... (Keep your other CSS rules for root, h3, p, etc.) ... */
 
 /* 3. Style the Card Container (Rounded Corners, Fixed Height) */
-/* Targeting the card container reliably */
 div[data-testid*="stVerticalBlock"] > .stContainer {
     border-radius: 15px; 
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1); 
     overflow: hidden; 
-    height: 400px; /* Keeping fixed height for shape consistency */
+    height: 400px; 
     display: flex; 
     flex-direction: column; 
     justify-content: space-between;
-    padding-bottom: 10px;
-    padding-top: 0; 
+    /* CRITICAL: Ensure the overall card has NO internal top padding */
+    padding: 0 0 10px 0 !important; 
 }
 
-/* 4. Style the Image Container (NEW FIX) */
-/* This targets the Streamlit image container element */
+/* 4. Style the Image Container (Wrapper: div[data-testid="stImage"]) */
 div[data-testid="stImage"] {
-    max-width: 100%; /* Ensure container doesn't exceed column width */
-    height: auto;
-}
-
-/* 5. Style the Image element itself */
-div[data-testid="stImage"] img {
-    border-radius: 15px 15px 0 0; 
-    width: 100%;
-}
-
-/* 6. Style Text */
-h3 { 
-    font-size: 20px;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-p { 
-    font-size: 14px;
-    color: #6c757d; 
-    margin-bottom: 10px;
-}
-
-/* Style the inner block containing text and button for alignment */
-.card-content-wrapper {
-    padding: 0 10px; /* Uniform horizontal padding for the content area */
+    /* CRITICAL: Aggressively remove all internal/external spacing */
+    margin: 0 !important; 
+    padding: 0 !important;
+    flex-shrink: 0;
+    max_width:100%;
+    /* NEW: Remove any border-radius/borders on the container itself */
+    border-radius: 0 !important; 
+    border: none !important;
 }
 </style>
 """
-
 # --- Data Loading and Initialization (No Change Needed Here) ---
 
 @st.cache_data 
@@ -130,8 +109,7 @@ def display_cards(card_data, item_name, col):
         with st.container(): 
             
             # The use_container_width=True is essential here.
-            st.image(card_data['image_url'], use_container_width=True, caption="") 
-            
+            st.image(card_data['image_url'], width=1000, caption="") 
             # Use a div wrapper for the content to apply consistent padding via CSS
             st.markdown('<div class="card-content-wrapper">', unsafe_allow_html=True)
             
