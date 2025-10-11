@@ -63,7 +63,7 @@ if 'raw_df' not in st.session_state:
     st.session_state['item_summary'] = [
         {"name": name, 
          "description": data.get("item_description"),
-         "image_url": GROCERY_IMAGE_PATH} 
+         "image_url": data.get("image_url")} 
         for name, data in consolidated_data.items()
     ]
     
@@ -109,7 +109,11 @@ def display_cards(card_data, item_name, col):
         with st.container(): 
             
             # The use_container_width=True is essential here.
-            st.image(card_data['image_url'], width=1000, caption="") 
+            if ("example" in card_data['image_url']):
+                st.image(GROCERY_IMAGE_PATH, width=1000, caption="") 
+            else:
+                st.image(card_data['image_url'], width=1000, caption="") 
+
             # Use a div wrapper for the content to apply consistent padding via CSS
             st.markdown('<div class="card-content-wrapper">', unsafe_allow_html=True)
             
