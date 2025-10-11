@@ -122,15 +122,14 @@ def plot_price_history(df_raw, item_name):
         # Update the main chart title to show min/max summary
         title=[
             "Price Trend over Time",
-            f"Min: ${min_price:.2f}",
-            f"Max: ${max_price:.2f}"
+            f"Lowest price over time: ${min_price:.2f}",
+            f"Highest price over time: ${max_price:.2f}"
         ]
     )
     # Combine the layers
     chart = (line_chart + text_layer).interactive() 
     st.altair_chart(chart, use_container_width=True)
-
-
+    
 # --- 3. Streamlit Card Display Function (SLIGHTLY MODIFIED) ---
 
 def display_cards(card_data, item_name, col):
@@ -181,17 +180,19 @@ def app():
     )
     
     # --- Logo and Centered Search Bar Section (No change) ---
-    col_logo, col_search_center, col_spacer = st.columns([1, 2, 1])
+    col_logo, col_search_center, col_spacer = st.columns([1, 3, 0.5])
     with col_logo:
         try:
-             st.image(LOGO_IMAGE_PATH, width=100)
+             st.image(LOGO_IMAGE_PATH, width=200)
+             st.image("images/name.png", width=150)
         except:
              st.markdown("## **LOGO**") 
              
     with col_search_center:
+        st.markdown("<br><br>", unsafe_allow_html=True)
         search_query = st.text_input(
             "Card Search", 
-            placeholder="Search cards...",
+            placeholder="Search items or description...",
             key="search_input",
             label_visibility="collapsed" 
         ).lower()
@@ -228,7 +229,7 @@ def app():
             st.warning("No cards matched your search query.")
             
     elif not st.session_state['selected_item']:
-        st.header("Top Recommendations ✨")
+        st.header("Top Recommendations For You✨")
         
         if len(all_cards) >= NUMBER_OF_RECOMMENDATIONS:
             random_cards = random.sample(all_cards, NUMBER_OF_RECOMMENDATIONS)
