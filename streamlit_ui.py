@@ -194,7 +194,7 @@ def app():
     )
     
     # --- Logo and Centered Search Bar Section (No change) ---
-    col_logo, col_search_center, col_spacer = st.columns([1, 3, 0.5])
+    padding, col_logo, col_search_center, col_spacer = st.columns([0.2,1, 3, 0.5])
     with col_logo:
         try:
              st.image(LOGO_IMAGE_PATH, width=200)
@@ -203,14 +203,16 @@ def app():
              st.markdown("## **LOGO**") 
              
     with col_search_center:
-        st.markdown("<br><br>", unsafe_allow_html=True)
         search_query = st.text_input(
             "Card Search", 
             placeholder="Search items or description...",
             key="search_input",
             label_visibility="collapsed" 
         ).lower()
-
+    st.markdown(
+        "<p style='text-align: center; color: #E2F1EC;'>Your personal window into Canada’s inflation trends</p>", 
+        unsafe_allow_html=True
+        )
     st.markdown("---")
     
     # --- Price History Graph Section (No change) ---
