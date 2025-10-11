@@ -209,10 +209,10 @@ def app():
             key="search_input",
             label_visibility="collapsed" 
         ).lower()
-    st.markdown(
-        "<p style='text-align: center; color: #E2F1EC;'>Your personal window into Canada’s inflation trends</p>", 
-        unsafe_allow_html=True
-        )
+        st.markdown(
+            "<br></br> <p style='text-align: center; color: #555555;'>Your personal window into Canada’s inflation trends</p>", 
+            unsafe_allow_html=True
+            )
     st.markdown("---")
     
     # --- Price History Graph Section (No change) ---
