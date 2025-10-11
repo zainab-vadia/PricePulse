@@ -10,7 +10,6 @@ It allows users to search for grocery items, explore historical price data, and 
 ## 🚀 Features
 - **Interactive Search:** Quickly find items by name or description.  
 - **Dynamic Charts:** Explore price trends over time with interactive Altair visualizations.  
-- **Smart Recommendations:** Randomly displays featured items on startup.  
 - **Shop Links:** Directly open relevant store or product pages.  
 - **Modern UI:** Fully custom CSS for cards, buttons, and layout.
 
@@ -49,7 +48,8 @@ It allows users to search for grocery items, explore historical price data, and 
 
 3. **Install dependencies**
    ```bash
-   pip install -r requirements.txt
+   pip install streamlit
+   pip install pandas
    ```
 
 ---
@@ -93,14 +93,6 @@ You can modify constants at the top of `app.py`:
 - **Images/Logos** → replace files under `images/`  
 
 To change theme or layout, edit the `CUSTOM_CARD_CSS` string.
-
----
-
-## 🧠 Example Screenshot
-*(Optional – add one here later)*
-```
-![Dashboard Preview](images/preview.png)
-```
 
 ---
 
