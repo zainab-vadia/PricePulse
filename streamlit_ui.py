@@ -10,6 +10,7 @@ LOGO_IMAGE_PATH = "logo.png"
 FAVICON_PATH = "logo.png" 
 NUMBER_OF_RECOMMENDATIONS = 6 
 
+
 # --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
 #CUSTOM_CARD_CSS = # --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
 CUSTOM_CARD_CSS = """
@@ -47,7 +48,20 @@ div[data-testid="stImage"] {
     border-radius: 0 !important; 
     border: none !important;
 }
+
+#MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+.stDeployButton {
+        visibility: hidden;
+}
+[data-testid="stStatusWidget"] {
+    visibility: hidden;
+}
+.stMainBlockContainer{
+    padding: 0;
+}
 </style>
+ 
 """
 # --- Data Loading and Initialization (No Change Needed Here) ---
 
@@ -153,7 +167,6 @@ def display_cards(card_data, item_name, col):
             st.markdown(f"**{item_name}**") 
             # Description (Smaller and Gray)
             st.markdown(f"{card_data['description']}")
-            
             # Details Button 
             st.button(
                 "Details", 
@@ -169,6 +182,7 @@ def display_cards(card_data, item_name, col):
 # --- 4. Main Application ---
 
 def app():
+    
     # Inject Custom CSS at the start
     st.markdown(CUSTOM_CARD_CSS, unsafe_allow_html=True)
 
