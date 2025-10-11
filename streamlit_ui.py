@@ -8,8 +8,10 @@ import altair as alt
 GROCERY_IMAGE_PATH = "images/grocery.jpeg" 
 LOGO_IMAGE_PATH = "logo.png" 
 FAVICON_PATH = "logo.png" 
-NUMBER_OF_RECOMMENDATIONS = 6 
-
+NUMBER_OF_RECOMMENDATIONS = 6
+ShopLinks = {} 
+ShopLinks["walmart"]="https://retaillink.login.wal-mart.com/"
+ShopLinks["electronics,entertainment,home"] = "https://smarterhouse.org/appliances-energy/home-electronics"
 
 # --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
 #CUSTOM_CARD_CSS = # --- Custom CSS for Styling (MODIFIED FOR IMAGE SIZE FIX) ---
@@ -77,7 +79,9 @@ if 'raw_df' not in st.session_state:
     st.session_state['item_summary'] = [
         {"name": name, 
          "description": data.get("item_description"),
-         "image_url": data.get("image_url")} 
+         "image_url": data.get("image_url"),
+         "link_to_buy": data.get("link_to_buy"),
+         "store": data.get("store")} 
         for name, data in consolidated_data.items()
     ]
     
@@ -168,13 +172,33 @@ def display_cards(card_data, item_name, col):
             # Description (Smaller and Gray)
             st.markdown(f"{card_data['description']}")
             # Details Button 
-            st.button(
-                "Details", 
-                key=f"btn_{item_name}",
-                on_click=select_item_for_graph, 
-                args=(item_name,),
-                use_container_width=True 
-            )
+            col_details, col_shop = st.columns([1, 1])
+            
+            with col_details:
+                # Details Button (Existing functionality)
+                st.button(
+                    "Details", 
+                    key=f"btn_details_{item_name}", # Unique key updated
+                    on_click=select_item_for_graph, 
+                    args=(item_name,),
+                    use_container_width=True 
+                )
+            
+            ShopUrl = card_data['link_to_buy']
+            #print(card_data['store'])
+            if not ShopUrl:
+                if card_data['store'].lower() in ShopLinks:
+                    ShopUrl = ShopLinks[card_data['store'].lower()]
+                else:
+                    ShopUrl = "https://www.example.com"
+            #print(ShopUrl)
+            with col_shop:
+                # NEW: Shop Now Button (Using st.link_button)
+                st.link_button(
+                    f"🛒 Shop Now",
+                    url=ShopUrl,
+                    use_container_width=True
+                )
             
             st.markdown('</div>', unsafe_allow_html=True)
 
