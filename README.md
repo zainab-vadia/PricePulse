@@ -1,4 +1,4 @@
-# 🥦 Inflation Insight Dashboard
+# Inflation Insight Dashboard
 
 ### *Your personal window into Canada’s inflation trends*
 
@@ -7,31 +7,16 @@ It allows users to search for grocery items, explore historical price data, and 
 
 ---
 
-## 🚀 Features
+## Features
 - **Interactive Search:** Quickly find items by name or description.  
 - **Dynamic Charts:** Explore price trends over time with interactive Altair visualizations.  
 - **Shop Links:** Directly open relevant store or product pages.  
 - **Modern UI:** Fully custom CSS for cards, buttons, and layout.
 
 ---
-
-## 🗂️ Project Structure
-```
-📦 inflation-insight-dashboard/
-├── main.py                # Contains ParseCsv() for reading and preparing data
-├── app.py                 # Main Streamlit application
-├── images/
-│   ├── grocery.jpeg
-│   ├── name.png
-│   └── ...
-├── logo.png               # App logo and favicon
-├── requirements.txt
-└── README.md
-```
-
 ---
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
 1. **Clone the repository**
    ```bash
@@ -54,7 +39,7 @@ It allows users to search for grocery items, explore historical price data, and 
 
 ---
 
-## ▶️ Run the App
+## Run the App
 
 Start the Streamlit app:
 ```bash
@@ -65,7 +50,7 @@ Then open the URL provided in the terminal (usually `http://localhost:8501/`).
 
 ---
 
-## 📊 How It Works
+## How It Works
 
 1. **Data Loading**
    - Uses `ParseCsv()` from `main.py` to load and preprocess CSV data.  
@@ -86,7 +71,7 @@ Then open the URL provided in the terminal (usually `http://localhost:8501/`).
 
 ---
 
-## 🧩 Customization
+## Customization
 You can modify constants at the top of `app.py`:
 - **`NUMBER_OF_RECOMMENDATIONS`** → how many random cards show by default  
 - **`ShopLinks`** → add or update store URLs  
@@ -96,10 +81,10 @@ To change theme or layout, edit the `CUSTOM_CARD_CSS` string.
 
 ---
 
-## 🧾 License
+## License
 This project is licensed under the **MIT License**.
 
 ---
 
-## 💡 Credits
-Built with ❤️ using [Streamlit](https://streamlit.io/), [Altair](https://altair-viz.github.io/), and [Pandas](https://pandas.pydata.org/).
+## Credits
+Built using [Streamlit](https://streamlit.io/), [Altair](https://altair-viz.github.io/), and [Pandas](https://pandas.pydata.org/).
